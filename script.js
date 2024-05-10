@@ -37,7 +37,10 @@ function displayResults(data) {
     data.forEach(item => {
         const itemHTML = `
             <div class="result-item">
-                <h4>${item.name}</h4>
+                <div>
+                    <h4 title="${item.name}">${item.name}</h4>
+                    <p class="epochs-info">Epochs: ${item.epochs}</p>
+                </div>
                 <p><a href="${item.link}" class="download-btn">Télécharger</a></p>
             </div>
         `;
