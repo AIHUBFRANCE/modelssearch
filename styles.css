@@ -1,0 +1,108 @@
+/* styles.css */
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #000000;
+    font-family: Arial, sans-serif;
+    color: #fff;
+}
+
+.search-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50%; /* Ajustez selon la taille désirée */
+    margin-top: 300px;
+}
+
+h1 {
+    color: white;
+    margin-bottom: 30px;
+    font-size: 55px;
+    text-align: center;
+}
+
+.search-bar {
+    display: flex;
+    justify-content: center;
+    width: 80%;
+    max-width: 600px;
+}
+
+#searchBox {
+    flex-grow: 1;
+    padding: 15px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 40px 0 0 40px;
+}
+
+button {
+    padding: 15px 20px;
+    border: #ffffff 5px solid;
+    background-color: black;
+    color: rgb(255, 255, 255);
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 0 40px 40px 0;
+}
+
+button:hover {
+    background-color: #555;
+}
+
+.error-message {
+    color: #d32f2f; /* Rouge plus foncé, plus agréable à l'œil */
+    font-weight: bold; /* Texte en gras pour plus de visibilité */
+    font-size: 14px; /* Taille du texte, ajustez selon vos préférences */
+    padding: 5px; /* Ajoute un peu d'espace autour du texte */
+    border-radius: 4px; /* Arrondit les coins */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Ajoute une légère ombre pour donner du relief */
+    display: inline-block; /* Permet d'appliquer le padding et le border-radius correctement */
+    margin-top: 10px; /* Ajoute un peu d'espace en haut du message */
+    align-items: center;
+}
+
+
+#resultsContainer {
+    width: 80%;
+    max-width: 600px;
+    margin-top: -20px;
+}
+
+.result-item {
+    background: #ffffff;
+    color: #000000;
+    border-radius: 30px;
+    padding: 20px;
+    margin-top: 10px;
+    width: 93%;
+    height: 30px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.result-item h4 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.download-btn {
+    padding: 15px 15px;
+    border: none;
+    background-color: black;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 20px;
+    text-decoration: none;
+}
+
+.download-btn:hover {
+    background-color: #272829;
+}
