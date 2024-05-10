@@ -106,7 +106,7 @@ button:hover {
     padding: 20px;
     margin-top: 10px;
     width: 93%;
-    height: 30px;
+    height: 50px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     display: flex;
     justify-content: space-between;
@@ -116,6 +116,14 @@ button:hover {
 .result-item h4 {
     margin: 0;
     font-size: 18px;
+}
+
+.epochs-info {
+    font-size: 14px; /* Smaller font size */
+    font-style: italic; /* Italicize the font */
+    color: #666; /* Lighter text color for less emphasis */
+    margin: 0; /* Remove any default margins */
+    padding-top: 5px; /* Space between the item name and epochs info */
 }
 
 .download-btn {
