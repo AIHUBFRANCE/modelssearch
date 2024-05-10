@@ -1,4 +1,3 @@
-
 // script.js
 async function search() {
     const container = document.getElementById('resultsContainer');
@@ -34,7 +33,7 @@ async function search() {
 function displayResults(data) {
     const container = document.getElementById('resultsContainer');
     container.innerHTML = ''; // Nettoyer les résultats précédents
-    container.innerHTML = '<p>Vous pouvez télécharger les modèles en cliquant sur le bouton de "Télécharger" ou copier en faisant un clic droit sur le lien et en cliquant sur "Copier l\'adresse du Lien".</p>';
+    container.innerHTML = '<p  class="info-box">Vous pouvez télécharger les modèles en cliquant sur le bouton de "Télécharger" ou copier en faisant un clic droit sur le lien et en cliquant sur "Copier l\'adresse du Lien".</p>';
     data.forEach(item => {
         const itemHTML = `
             <div class="result-item">
@@ -60,3 +59,19 @@ function displayError(message) {
         container.innerHTML = `<h3>${message}</h3>`;
     }
 }
+
+function toggleDarkMode() {
+    const body = document.body;
+    body.classList.toggle('dark-mode');
+    const mode = body.classList.contains('dark-mode') ? 'dark' : 'light';
+    localStorage.setItem('theme', mode); // Save theme preference
+}
+
+// Check for saved user preferences
+window.onload = function() {
+    if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark-mode');
+    }
+}
+
+document.getElementById('toggleMode').addEventListener('click', toggleDarkMode);
