@@ -255,123 +255,135 @@
     </div>
 
     <script>
-        const apiKey = 'd13b8b0e-c27a-4bf8-a4bc-e2cd9cdbbd1a';
-        let currentPage = 1;
-        let isLoading = false;
-        let hasMoreResults = true;
+    const apiKeys = [
+        '31127351-57e4-4204-b21d-0aabfa6b68be',
+        'ee852a94-d354-4b14-8de3-4e5d2012fb14',
+        'efe4a505-6c19-45b7-9e2b-1b1fa77954a0'
+    ];
+    let currentPage = 1;
+    let isLoading = false;
+    let hasMoreResults = true;
+    let apiKeyIndex = 0; // Tracks the current API key
 
-        async function search(reset = false) {
-            if (reset) {
-                currentPage = 1;
-                document.getElementById('resultsContainer').innerHTML = '';
-                hasMoreResults = true;
-            }
+    async function search(reset = false) {
+        if (reset) {
+            currentPage = 1;
+            document.getElementById('resultsContainer').innerHTML = '';
+            hasMoreResults = true;
+        }
 
-            if (isLoading || !hasMoreResults) return;
+        if (isLoading || !hasMoreResults) return;
 
-            isLoading = true;
-            const input = document.getElementById('searchBox').value;
-            let apiUrl;
+        isLoading = true;
+        const input = document.getElementById('searchBox').value;
+        let apiUrl;
 
-            if (input === '') {
-                apiUrl = `https://api.applio.org/key=${apiKey}/models/perpage=25/page=${currentPage}`;
-            } else {
-                if (input.length < 3) {
-                    displayError('Tu as déjà vu un nom avec moins de 3 lettres ? Mets en plus !');
-                    isLoading = false;
-                    return;
-                }
-                apiUrl = `https://api.applio.org/key=${apiKey}/models/search?name=${encodeURIComponent(input)}`;
-            }
-
-            try {
-                const response = await fetch(apiUrl);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                const data = await response.json();
-                if (data.length === 0) {
-                    if (reset) {
-                        displayError('Aucun modèle trouvé pour votre recherche.');
-                    }
-                    hasMoreResults = false;
-                } else {
-                    displayResults(data, reset);
-                    currentPage++;
-                }
-            } catch (error) {
-                displayError(`Erreur de recherche: ${error.message}`);
-            } finally {
+        if (input === '') {
+            apiUrl = `https://api.applio.org/key=${apiKeys[apiKeyIndex]}/models/perpage=25/page=${currentPage}`;
+        } else {
+            if (input.length < 3) {
+                displayError('Le nom est un peu trop petit...');
                 isLoading = false;
+                return;
             }
+            apiUrl = `https://api.applio.org/key=${apiKeys[apiKeyIndex]}/models/search?name=${encodeURIComponent(input)}`;
         }
 
-        function displayResults(data, reset) {
-            const container = document.getElementById('resultsContainer');
-            if (reset) {
-                container.innerHTML = '';
+        try {
+            const response = await fetch(apiUrl);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
             }
-            data.forEach(item => {
-                const epochs = item.epochs ? item.epochs : 'Inconnu';
-                const itemHTML = `
-                    <div class="result-item">
-                        <h2 title="${item.name}">${item.name}</h2>
-                        <p class="model-info">Epochs: ${epochs}</p>
-                        <p/>
-                        <div class="action-buttons">
-                            <a href="${item.link}" class="btn download-btn">Télécharger</a>
-                            <button class="btn copy-btn" onclick="copyLink('${item.link}')">Copier Lien</button>
-                        </div>
-                    </div>
-                `;
-                container.innerHTML += itemHTML;
-            });
-        }
-
-        function displayError(message) {
-            const container = document.getElementById('resultsContainer');
-            if (message === 'Fetch error: HTTP error! Status: 404') {
-                container.innerHTML = `
-                    <div class="result-item">
-                        <h4>Je crois que c'est pas ici :(</h4>
-                        <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" class="download-btn">Télécharger</a>
-                    </div>
-                `;
+            const data = await response.json();
+            if (data.length === 0) {
+                if (reset) {
+                    displayError('Aucun modèle trouvé pour votre recherche.');
+                }
+                hasMoreResults = false;
             } else {
-                container.innerHTML = `<div class="info-box">${message}</div>`;
+                displayResults(data, reset);
+                currentPage++;
             }
-        }
-
-        function copyLink(link) {
-            navigator.clipboard.writeText(link).then(() => {
-                alert('Lien copié dans le presse-papiers!');
-            }, (err) => {
-                console.error('Erreur lors de la copie: ', err);
-            });
-        }
-
-        // Fermer le modal en cliquant sur le bouton de fermeture (x)
-        document.querySelector('.close').onclick = function() {
-            document.getElementById('infoModal').style.display = 'none';
-        }
-
-        // Fermer le modal en cliquant en dehors de celui-ci
-        window.onclick = function(event) {
-            const modal = document.getElementById('infoModal');
-            if (event.target == modal) {
-                modal.style.display = 'none';
+        } catch (error) {
+            console.error(`Erreur de recherche avec API key ${apiKeys[apiKeyIndex]}: ${error.message}`);
+            // Move to the next API key if the current one fails
+            apiKeyIndex = (apiKeyIndex + 1) % apiKeys.length;
+            if (apiKeyIndex === 0) {
+                displayError('Toutes les clés API ont échoué. Veuillez réessayer plus tard.');
+            } else {
+                search(reset); // Retry with the next API key
             }
+        } finally {
+            isLoading = false;
         }
+    }
 
-        // Infinite scroll
-        window.onscroll = function() {
-            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
-                search();
-            }
-        };
+    function displayResults(data, reset) {
+        const container = document.getElementById('resultsContainer');
+        if (reset) {
+            container.innerHTML = '';
+        }
+        data.forEach(item => {
+            const epochs = item.epochs ? item.epochs : 'Inconnu';
+            const itemHTML = `
+                <div class="result-item">
+                    <h2 title="${item.name}">${item.name}</h2>
+                    <p class="model-info">Epochs: ${epochs}</p>
+                    <p/>
+                    <div class="action-buttons">
+                        <a href="${item.link}" class="btn download-btn">Télécharger</a>
+                        <button class="btn copy-btn" onclick="copyLink('${item.link}')">Copier Lien</button>
+                    </div>
+                </div>
+            `;
+            container.innerHTML += itemHTML;
+        });
+    }
 
-        // Initial load of models
-        window.onload = () => search(true);
-    </script>
+    function displayError(message) {
+        const container = document.getElementById('resultsContainer');
+        if (message === 'Fetch error: HTTP error! Status: 404') {
+            container.innerHTML = `
+                <div class="result-item">
+                    <h4>Je crois que c'est pas ici :(</h4>
+                    <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" class="download-btn">Télécharger</a>
+                </div>
+            `;
+        } else {
+            container.innerHTML = `<div class="info-box">${message}</div>`;
+        }
+    }
+
+    function copyLink(link) {
+        navigator.clipboard.writeText(link).then(() => {
+            alert('Lien copié dans le presse-papiers!');
+        }, (err) => {
+            console.error('Erreur lors de la copie: ', err);
+        });
+    }
+
+    // Fermer le modal en cliquant sur le bouton de fermeture (x)
+    document.querySelector('.close').onclick = function() {
+        document.getElementById('infoModal').style.display = 'none';
+    }
+
+    // Fermer le modal en cliquant en dehors de celui-ci
+    window.onclick = function(event) {
+        const modal = document.getElementById('infoModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    // Infinite scroll
+    window.onscroll = function() {
+        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
+            search();
+        }
+    };
+
+    // Initial load of models
+    window.onload = () => search(true);
+</script>
 </body>
 </html>
